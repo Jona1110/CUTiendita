@@ -95,7 +95,7 @@ function renderCatalogo(arrProductos) {
                 <p class="price-tag">${p.precio}</p>
                 <p class="vendedor-tag">📦 ${p.desc}</p>
             </div>
-            <a href="https://wa.me/52${p.whatsapp}?text=Hola! Viste tu producto en CUTiendita: *${p.nombre}*. ¿Aún tienes disponible?" 
+            <a href="https://wa.me/52${p.whatsapp}?text=Hola! Vi tu producto en CUTiendita: *${p.nombre}*. ¿Aún tienes disponible?" 
                target="_blank" class="btn-wa">Contactar por WhatsApp</a>
         </div>
     `).join('');
