@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUTiendita | El mercado del CUTonalá</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- ENLACE AL MANIFIESTO PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#14B8D4">
+    
+    <!-- CÓDIGO GLOBAL DE VINCULACIÓN DE GOOGLE ADSENSE -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6555036971090011"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container" onclick="showSection('home')">
+            <img src="LOGO_CUTIENDITA.png" alt="CUTiendita Logo" class="nav-logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="showSection('home')">Inicio</a></li>
+            <li><a href="#" id="menu-account" onclick="checkAuthNav()">Mi Cuenta</a></li>
+        </ul>
+    </nav>
+
+    <main id="app-container">
+        <!-- Sección Home (Catálogo) -->
+        <section id="home" class="page active">
+            
+            <!-- BOTÓN DINÁMICO DE INSTALACIÓN PWA -->
+            <div id="pwa-install-container" style="display: none; margin-bottom: 1.5rem; background: var(--white); padding: 1rem; border-radius: var(--radius); border: 2px solid var(--border); box-shadow: var(--shadow); text-align: center;">
+                <p style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;">Disfruta de una mejor experiencia guardando la app en tu celular</p>
+                <button id="btn-pwa-install" class="btn-block" style="max-width: 200px; margin: 0 auto; padding: 0.7rem 1rem;">Instalar app</button>
+            </div>
+
+            <h1 class="section-title">Productos Disponibles</h1>
+            
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="🔍 ¿Qué estás buscando hoy?..." oninput="filtrarProductos()">
+                </div>
+                <div class="category-tags">
+                    <button class="tag active" data-cat="todas" onclick="filtrarCategoria('todas', this)">Todas</button>
+                    <button class="tag" data-cat="Comida" onclick="filtrarCategoria('Comida', this)">🍔 Comida</button>
+                    <button class="tag" data-cat="Ropa" onclick="filtrarCategoria('Ropa', this)">👕 Ropa/Accesorios</button>
+                    <button class="tag" data-cat="Papeleria" onclick="filtrarCategoria('Papeleria', this)">📚 Papelería</button>
+                    <button class="tag" data-cat="Electronica" onclick="filtrarCategoria('Electronica', this)">⚡ Electrónica</button>
+                    <button class="tag" data-cat="Otros" onclick="filtrarCategoria('Otros', this)">✨ Otros</button>
+                </div>
+            </div>
+
+            <!-- BLOQUE DE PUBLICIDAD REAL DE ADSENSE EN EL CATÁLOGO -->
+            <div class="ad-container-wrapper" style="margin: 1.5rem 0; text-align: center; width: 100%; overflow: hidden;">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-6555036971090011"
+                     data-ad-slot="1426301308"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+            
+            <div id="product-grid" class="grid">
+                <!-- Se inyectan las tarjetas vía JS -->
+            </div>
+        </section>
+
+        <!-- Sección Login -->
+        <section id="login" class="page">
+            <div class="form-card">
+                <h2>Iniciar Sesión</h2>
+                <p class="form-subtitle">Ingresa para administrar tus productos en el CUTonalá</p>
+                <div class="input-group">
+                    <input type="email" id="login-email" required placeholder=" ">
+                    <label>Correo institucional</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-pass" required placeholder=" ">
+                    <label>Contraseña</label>
+                </div>
+                <button class="btn-block" onclick="loginUser()">Entrar</button>
+                <p class="form-footer">¿No tienes cuenta? <a href="#" onclick="showSection('register')">Regístrate aquí</a></p>
+            </div>
+        </section>
+
+        <!-- Sección Registro -->
+        <section id="register" class="page">
+            <div class="form-card">
+                <h2>Registro de Vendedor</h2>
+                <p class="form-subtitle">Forma parte de la red de comercio estudiantil</p>
+                <div class="input-group">
+                    <input type="text" id="reg-nombre" required placeholder=" ">
+                    <label>Nombre completo</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="reg-carrera" required placeholder=" ">
+                    <label>Carrera</label>
+                </div>
+                <div class="input-group">
+                    <input type="tel" id="reg-tel" required placeholder=" ">
+                    <label>WhatsApp (10 dígitos)</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="reg-email" required placeholder=" ">
+                    <label>Correo electrónico</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-pass" required placeholder=" ">
+                    <label>Contraseña</label>
+                </div>
+                <button class="btn-block" onclick="registrarVendedorForm()">Crear cuenta</button>
+                <p class="form-footer">¿Ya tienes cuenta? <a href="#" onclick="showSection('login')">Inicia sesión</a></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+
+    <!-- CONTROLADOR DE INSTALACIÓN Y REGISTRO DEL SERVICE WORKER -->
+    <script>
+        let deferredPrompt;
+        const installContainer = document.getElementById('pwa-install-container');
+        const installBtn = document.getElementById('btn-pwa-install');
+
+        // 1. Registro del Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('PWA: Service Worker activo.', reg.scope))
+                    .catch((err) => console.error('PWA: Error en Service Worker.', err));
+            });
+        }
+
+        // 2. Captura del evento de instalación nativo
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Evita que los navegadores en Android muestren su barra automática por defecto
+            e.preventDefault();
+            // Almacena el evento para dispararlo cuando el usuario presione tu botón
+            deferredPrompt = e;
+            // Muestra de manera fluida el contenedor de instalación en tu catálogo
+            installContainer.style.display = 'block';
+        });
+
+        // 3. Flujo de ejecución al presionar tu botón "Instalar app"
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            
+            // Muestra la ventana emergente nativa del sistema operativo
+            deferredPrompt.prompt();
+            
+            // Espera la respuesta del estudiante (Si aceptó instalar o canceló)
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`PWA: El usuario respondió a la instalación: ${outcome}`);
+            
+            // Limpia la variable interna ya que el prompt solo puede ser usado una vez
+            deferredPrompt = null;
+            // Oculta el contenedor de la interfaz de forma limpia
+            installContainer.style.display = 'none';
+        });
+
+        // 4. Ocultar el botón si la aplicación ya fue instalada con éxito
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA: ¡CUTiendita instalada con éxito en el dispositivo!');
+            installContainer.style.display = 'none';
+            deferredPrompt = null;
+        });
+    </script>
+</body>
+</html>
